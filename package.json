@@ -1,0 +1,19 @@
+{
+  "name": "ffmpeg-pro-video-api",
+  "version": "2.0.0",
+  "description": "API احترافي لإنشاء فيديوهات بـ FFmpeg - تصميم متقدم",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "fluent-ffmpeg": "^2.1.2",
+    "axios": "^1.6.0",
+    "uuid": "^9.0.0",
+    "cors": "^2.8.5"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
