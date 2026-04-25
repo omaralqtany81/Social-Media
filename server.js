@@ -10,7 +10,6 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
-// مجلدات العمل
 const TEMP_DIR = '/tmp/videos';
 const AUDIO_DIR = '/tmp/audio';
 const FONTS_DIR = '/tmp/fonts';
@@ -21,40 +20,39 @@ const FONTS_DIR = '/tmp/fonts';
   }
 });
 
-// تخزين حالة الـ renders
+
 const renders = {};
 
-// ألوان التصميم
 const DESIGN = {
-  primaryColor: '#00D9FF',    // أزرق سماوي
-  secondaryColor: '#FF6B35',  // برتقالي
-  bgColor: '#0a0a0a',         // أسود
-  textColor: '#FFFFFF',       // أبيض
-  accentColor: '#7B2CBF',     // بنفسجي
+  primaryColor: '#00D9FF',     
+  secondaryColor: '#FF6B35',  
+  bgColor: '#0a0a0a',         
+  textColor: '#FFFFFF',       
+  accentColor: '#7B2CBF',     
   gradients: [
-    '#667eea',  // أزرق بنفسجي
-    '#764ba2',  // بنفسجي
-    '#f093fb',  // وردي
-    '#f5576c',  // أحمر وردي
-    '#4facfe',  // أزرق فاتح
-    '#00f2fe',  // سماوي
+    '#667eea',  
+    '#764ba2',  
+    '#f093fb',  
+    '#f5576c',  
+    '#4facfe',  
+    '#00f2fe',  
   ]
 };
 
-// إعدادات الفيديو الاحترافية
+
 const VIDEO_SETTINGS = {
   width: 1080,
   height: 1920,
   fps: 30,
-  sceneDuration: 5,        // 5 ثواني لكل مشهد
-  transitionDuration: 0.5, // نصف ثانية انتقال
-  fontSize: 42,            // خط أصغر عشان ما ينقص
-  maxTextWidth: 900,       // عرض النص الأقصى
-  textPadding: 90,         // مسافة من الحواف
-  lineSpacing: 1.4,        // تباعد الأسطر
+  sceneDuration: 5,         
+  transitionDuration: 0.5, 
+  fontSize: 42,            
+  maxTextWidth: 900,       
+  textPadding: 90,         
+  lineSpacing: 1.4,        
 };
 
-// الصفحة الرئيسية
+
 app.get('/', (req, res) => {
   res.json({
     status: 'running',
@@ -76,7 +74,7 @@ app.get('/', (req, res) => {
   });
 });
 
-// إنشاء فيديو جديد
+
 app.post('/render', async (req, res) => {
   const { 
     scenes = [], 
@@ -86,7 +84,7 @@ app.post('/render', async (req, res) => {
     addTechSounds = true
   } = req.body;
 
-  // التحقق من المشاهد
+  
   if (!scenes || !Array.isArray(scenes) || scenes.length === 0) {
     return res.status(400).json({ 
       error: 'يجب إرسال مصفوفة scenes',
@@ -117,11 +115,11 @@ app.post('/render', async (req, res) => {
     message: `بدأ إنشاء الفيديو (${scenes.length} مشاهد)...`
   });
 
-  // إنشاء الفيديو في الخلفية
+  
   processVideoPro(renderId, scenes, outputPath, { width, height, title, addTechSounds });
 });
 
-// معالجة الفيديو الاحترافية
+
 async function processVideoPro(renderId, scenes, outputPath, options) {
   try {
     const { width, height, addTechSounds } = options;
@@ -130,22 +128,22 @@ async function processVideoPro(renderId, scenes, outputPath, options) {
 
     console.log(`🎬 بدء معالجة ${scenes.length} مشاهد...`);
 
-    // معالجة كل مشهد
-    for (let i = 0; i < scenes.length; i++) {
-      const scene = scenes[i];
-      const progress = Math.floor((i / scenes.length) * 60);
+    
+    for (let I = 0; I < scenes.length; I++) {
+      const scene = scenes[I];
+      const progress = Math.floor((I / scenes.length) * 60);
       renders[renderId].progress = progress;
 
-      console.log(`📹 مشهد ${i + 1}/${scenes.length}: ${scene.text?.substring(0, 30)}...`);
+      console.log(`📹 مشهد ${I + 1}/${scenes.length}: ${scene.text?.substring(0, 30)}...`);
 
-      const sceneOutput = path.join(TEMP_DIR, `${renderId}_scene_${i}.mp4`);
+      const sceneOutput = path.join(TEMP_DIR, `${renderId}_scene_${I}.mp4`);
       
-      // إنشاء المشهد
+      
       await createProScene(
         sceneOutput,
-        scene.text || `مشهد ${i + 1}`,
+        scene.text || `مشهد ${I + 1}`,
         scene.background,
-        i,
+        I,
         { width, height, duration: sceneDuration }
       );
 
@@ -155,13 +153,11 @@ async function processVideoPro(renderId, scenes, outputPath, options) {
     renders[renderId].progress = 70;
     console.log('🔗 دمج المشاهد...');
 
-    // دمج كل المشاهد
     const silentVideo = path.join(TEMP_DIR, `${renderId}_silent.mp4`);
     await concatenateVideos(sceneFiles, silentVideo);
 
     renders[renderId].progress = 85;
 
-    // إضافة الأصوات التقنية
     if (addTechSounds) {
       console.log('🎵 إضافة أصوات تقنية...');
       await addTechAudioPro(silentVideo, outputPath);
@@ -170,9 +166,8 @@ async function processVideoPro(renderId, scenes, outputPath, options) {
       fs.renameSync(silentVideo, outputPath);
     }
 
-    // تنظيف الملفات المؤقتة
-    sceneFiles.forEach(f => {
-      if (fs.existsSync(f)) fs.unlinkSync(f);
+    sceneFiles.forEach(F => {
+      if (fs.existsSync(F)) fs.unlinkSync(F);
     });
 
     renders[renderId].progress = 100;
@@ -188,19 +183,16 @@ async function processVideoPro(renderId, scenes, outputPath, options) {
   }
 }
 
-// إنشاء مشهد احترافي
 async function createProScene(outputPath, text, backgroundUrl, sceneIndex, options) {
   return new Promise(async (resolve, reject) => {
     const { width, height, duration } = options;
 
-    // تنظيف وتقسيم النص
     const cleanText = text
       .replace(/['"]/g, '')
       .replace(/:/g, ' ')
       .replace(/\n/g, ' ')
       .trim();
 
-    // تقسيم النص لأسطر قصيرة
     const words = cleanText.split(' ');
     const lines = [];
     let currentLine = '';
@@ -216,35 +208,27 @@ async function createProScene(outputPath, text, backgroundUrl, sceneIndex, optio
     }
     if (currentLine) lines.push(currentLine);
 
-    // أخذ أول 3 أسطر فقط
     const displayLines = lines.slice(0, 3);
     const displayText = displayLines.join('\\n');
 
-    // ألوان متدرجة لكل مشهد
     const gradientColors = [
       '0x1a1a2e', '0x16213e', '0x0f3460', '0x1a1a40',
       '0x2d132c', '0x1f1f38', '0x0d1b2a', '0x1b263b'
     ];
     const bgColor = gradientColors[sceneIndex % gradientColors.length];
 
-    // حجم الخط متناسب
     const fontSize = Math.min(VIDEO_SETTINGS.fontSize, Math.floor(width / 20));
 
-    // إنشاء الفيديو
     let command = ffmpeg();
 
-    // خلفية ملونة متدرجة
     command = command
-      .input(`color=c=${bgColor}:s=${width}x${height}:d=${duration}`)
+      .input(`color=c=${bgColor}:s=${width}X${height}:d=${duration}`)
       .inputFormat('lavfi');
 
-    // إضافة النص
     const textFilter = `drawtext=text='${displayText}':fontsize=${fontSize}:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2:line_spacing=20:borderw=2:bordercolor=black:shadowcolor=black:shadowx=3:shadowy=3`;
 
-    // إضافة شريط سفلي
     const bottomBar = `drawbox=x=0:y=h-80:w=w:h=80:color=0x000000@0.7:t=fill`;
 
-    // رقم المشهد
     const sceneNumber = `drawtext=text='${sceneIndex + 1}':fontsize=28:fontcolor=0x00D9FF:x=w-60:y=h-55`;
 
     command
@@ -266,7 +250,7 @@ async function createProScene(outputPath, text, backgroundUrl, sceneIndex, optio
       .on('end', () => resolve(outputPath))
       .on('error', (err) => {
         console.error('Scene error:', err.message);
-        // إنشاء مشهد بسيط كـ fallback
+
         createSimpleScene(outputPath, displayText, width, height, duration, bgColor)
           .then(resolve)
           .catch(reject);
@@ -275,13 +259,12 @@ async function createProScene(outputPath, text, backgroundUrl, sceneIndex, optio
   });
 }
 
-// مشهد بسيط (fallback)
 function createSimpleScene(outputPath, text, width, height, duration, bgColor) {
   return new Promise((resolve, reject) => {
     const safeText = text.replace(/[^a-zA-Z0-9\u0600-\u06FF\s]/g, '').substring(0, 50);
     
     ffmpeg()
-      .input(`color=c=${bgColor}:s=${width}x${height}:d=${duration}`)
+      .input(`color=c=${bgColor}:s=${width}X${height}:d=${duration}`)
       .inputFormat('lavfi')
       .videoFilters([
         `drawtext=text='${safeText}':fontsize=36:fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2`
@@ -294,7 +277,6 @@ function createSimpleScene(outputPath, text, width, height, duration, bgColor) {
   });
 }
 
-// دمج الفيديوهات
 function concatenateVideos(inputFiles, outputPath) {
   return new Promise((resolve, reject) => {
     if (inputFiles.length === 0) {
@@ -302,7 +284,7 @@ function concatenateVideos(inputFiles, outputPath) {
     }
 
     const listPath = path.join(TEMP_DIR, `concat_${Date.now()}.txt`);
-    const listContent = inputFiles.map(f => `file '${f}'`).join('\n');
+    const listContent = inputFiles.map(F => `file '${F}'`).join('\n');
     fs.writeFileSync(listPath, listContent);
 
     ffmpeg()
@@ -322,20 +304,15 @@ function concatenateVideos(inputFiles, outputPath) {
   });
 }
 
-// إضافة أصوات تقنية احترافية
 async function addTechAudioPro(videoPath, outputPath) {
   return new Promise(async (resolve, reject) => {
     try {
-      // الحصول على مدة الفيديو
       const duration = await getVideoDuration(videoPath);
       
-      // إنشاء صوت تقني بـ FFmpeg (بدون تحميل)
       const audioPath = path.join(AUDIO_DIR, `tech_${Date.now()}.wav`);
       
-      // إنشاء صوت نقرات بسيط
       await createTechSound(audioPath, duration);
 
-      // دمج الصوت مع الفيديو
       ffmpeg(videoPath)
         .input(audioPath)
         .outputOptions([
@@ -353,7 +330,6 @@ async function addTechAudioPro(videoPath, outputPath) {
         })
         .on('error', (err) => {
           console.error('Audio merge error:', err.message);
-          // نسخ الفيديو بدون صوت
           fs.copyFileSync(videoPath, outputPath);
           resolve(outputPath);
         })
@@ -367,17 +343,13 @@ async function addTechAudioPro(videoPath, outputPath) {
   });
 }
 
-// إنشاء صوت تقني
 function createTechSound(outputPath, duration) {
   return new Promise((resolve, reject) => {
-    // إنشاء صوت نقرات كيبورد باستخدام FFmpeg
-    // نستخدم sine waves قصيرة تحاكي صوت الكيبورد
     const clickPattern = [];
-    for (let t = 0; t < duration; t += 0.3) {
+    for (let T = 0; T < duration; T += 0.3) {
       clickPattern.push(`sine=frequency=800:duration=0.02`);
     }
 
-    // إنشاء صوت ambient تقني بسيط
     ffmpeg()
       .input('anoisesrc=d=' + duration + ':c=pink:a=0.02')
       .inputFormat('lavfi')
@@ -388,7 +360,6 @@ function createTechSound(outputPath, duration) {
       .output(outputPath)
       .on('end', () => resolve(outputPath))
       .on('error', (err) => {
-        // إنشاء صوت صمت كـ fallback
         ffmpeg()
           .input(`anullsrc=r=44100:cl=stereo`)
           .inputFormat('lavfi')
@@ -402,12 +373,11 @@ function createTechSound(outputPath, duration) {
   });
 }
 
-// الحصول على مدة الفيديو
 function getVideoDuration(videoPath) {
   return new Promise((resolve, reject) => {
     ffmpeg.ffprobe(videoPath, (err, metadata) => {
       if (err) {
-        resolve(30); // افتراضي 30 ثانية
+        resolve(30); 
       } else {
         resolve(metadata.format.duration || 30);
       }
@@ -415,7 +385,6 @@ function getVideoDuration(videoPath) {
   });
 }
 
-// حالة الفيديو
 app.get('/status/:id', (req, res) => {
   const render = renders[req.params.id];
   if (!render) {
@@ -424,7 +393,6 @@ app.get('/status/:id', (req, res) => {
   res.json(render);
 });
 
-// تحميل الفيديو
 app.get('/video/:id', (req, res) => {
   const videoPath = path.join(TEMP_DIR, `${req.params.id}.mp4`);
   if (!fs.existsSync(videoPath)) {
@@ -439,17 +407,11 @@ app.get('/video/:id', (req, res) => {
   fs.createReadStream(videoPath).pipe(res);
 });
 
-// تشغيل السيرفر
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log('═══════════════════════════════════════');
   console.log(`🎬 FFmpeg Pro Video API v2.0`);
   console.log(`🚀 Running on port ${PORT}`);
   console.log('═══════════════════════════════════════');
-  console.log('✅ 8 مشاهد كاملة');
-  console.log('✅ نصوص متناسبة ومقروءة');
-  console.log('✅ أصوات تقنية');
-  console.log('✅ تصميم احترافي');
-  console.log('✅ حلال 100%');
-  console.log('═══════════════════════════════════════');
+  
 });
